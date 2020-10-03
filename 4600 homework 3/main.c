@@ -1,4 +1,14 @@
+/***************************************************************************//**
 
+  @file         main.c
+
+  @author       Stephen Brennan
+
+  @date         Thursday,  8 January 2015
+
+  @brief        LSH (Libstephen SHell)
+
+*******************************************************************************/
 
 #include <sys/wait.h>
 #include <sys/types.h>
@@ -7,16 +17,33 @@
 #include <stdio.h>
 #include <string.h>
 
-
+/*
+  Function Declarations for builtin shell commands:
+ */
 int lsh_cd(char **args);
 int lsh_help(char **args);
 int lsh_exit(char **args);
 
 int setshellname(char **args);
 int stop(char **args);
-char * shellname = "myshell";
+int setterminator(char ** args);
+int newname(char **args);
+
+char *shellname = "myshell";
+char terminator = '>';
 
 
+
+int new_name_count = 0;
+char new_name_arr [10][20];
+char old_name_arr [10][20]={
+ "cd",
+ "help",
+ "exit",
+ "setshellname",
+ "setterminator",
+ "newname"
+};
 /*
   List of builtin commands, followed by their corresponding functions.
  */
@@ -25,7 +52,9 @@ char *builtin_str[] = {
   "help",
   "exit",
   "setshellname",
-  "stop"
+  "stop",
+  "setterminator",
+  "newname"
 };
 
 int (*builtin_func[]) (char **) = {
@@ -33,10 +62,10 @@ int (*builtin_func[]) (char **) = {
   &lsh_help,
   &lsh_exit,
   &setshellname,
-  &stop
+  &stop,
+  &setterminator,
+  &newname
 };
-
-
 
 int lsh_num_builtins() {
   return sizeof(builtin_str) / sizeof(char *);
@@ -45,12 +74,26 @@ int lsh_num_builtins() {
 /*
   Builtin function implementations.
 */
+int newname(char **args){
+  for(int i = 0; i < 10; i++){
+      if(args[1] == old_name_arr[i]){
+        new_name_count++;
+        new_name_arr[i] = args[1];
+        return 1;
+  }
+      return 0;
+}
 
-/**
-   @brief Bultin command: change directory.
-   @param args List of args.  args[0] is "cd".  args[1] is the directory.
-   @return Always returns 1, to continue executing.
- */
+
+int setterminator(char **args){
+if (args[1] == NULL){
+    terminator = '>';
+}
+else{
+    terminator = args[1][0];
+}
+}
+
 
 int setshellname(char **args)
 {
@@ -63,10 +106,13 @@ int setshellname(char **args)
     return 1;
 }
 
-int stop(char ** args){
-    return 0;
-}
 
+
+/**
+   @brief Bultin command: change directory.
+   @param args List of args.  args[0] is "cd".  args[1] is the directory.
+   @return Always returns 1, to continue executing.
+ */
 int lsh_cd(char **args)
 {
   if (args[1] == NULL) {
@@ -108,6 +154,12 @@ int lsh_exit(char **args)
 {
   return 0;
 }
+
+int stop(char **args)
+{
+    return 0;
+}
+
 
 /**
   @brief Launch a program and wait for it to terminate.
@@ -269,7 +321,8 @@ void lsh_loop(void)
   int status;
 
   do {
-    printf("%s > ", shellname);
+    printf("%s",shellname);
+    printf("%c ",terminator);
     line = lsh_read_line();
     args = lsh_split_line(line);
     status = lsh_execute(args);
@@ -296,3 +349,4 @@ int main(int argc, char **argv)
 
   return EXIT_SUCCESS;
 }
+

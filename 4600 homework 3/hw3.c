@@ -27,10 +27,23 @@ int lsh_exit(char **args);
 int setshellname(char **args); 
 int stop(char **args); 
 int setterminator(char ** args); 
-
+int newname(char **args);
 
 char *shellname = "myshell";
 char terminator = '>';
+
+
+
+int new_name_count = 0; 
+char new_name_arr [10][20]; 
+char old_name_arr [10][20]={
+ "cd",
+ "help",
+ "exit",
+ "setshellname",
+ "setterminator",
+ "newname"
+};
 /*
   List of builtin commands, followed by their corresponding functions.
  */
@@ -40,7 +53,8 @@ char *builtin_str[] = {
   "exit",
   "setshellname", 
   "stop",
-  "setterminator"
+  "setterminator",
+  "newname"
 };
 
 int (*builtin_func[]) (char **) = {
@@ -49,7 +63,8 @@ int (*builtin_func[]) (char **) = {
   &lsh_exit,
   &setshellname,
   &stop,
-  &setterminator
+  &setterminator,
+  &newname
 };
 
 int lsh_num_builtins() {
@@ -59,6 +74,34 @@ int lsh_num_builtins() {
 /*
   Builtin function implementations.
 */
+int newname(char **args){
+ int i = 0; 
+ int pos_arr=0; 
+   	if(args[1] == NULL) { printf("No name Entered"); }
+  else if(args[2] == NULL){
+    printf("Enter a valid no name");
+    return 1; 
+  }
+  else{  
+    while(i < pos_arr && old_name_arr[0] != args[2]){
+	i++; 
+  
+    }
+  }
+    if(old_name_arr[i] == args[2]){
+    	strcpy(new_name_arr[i], args[1]);
+	    //new_name_arr[i] == args[1];
+    }
+    else{
+    	strcpy(old_name_arr[pos_arr],args[2]); 
+	strcpy(old_name_arr[pos_arr],args[2]);
+    	//old_name_arr[pos_arr] = args[2]; 
+       // new_name_arr[pos_arr] = args[1]; 
+	pos_arr++; 	
+    }
+    return 1; 
+}
+
 
 int setterminator(char **args){
 if (args[1] == NULL){
