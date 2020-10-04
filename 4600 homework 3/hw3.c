@@ -2,9 +2,9 @@
 
   @file         main.c
 
-  @author       Stephen Brennan
+  @author       Jason Eastman
 
-  @date         Thursday,  8 January 2015
+  @date         October 1, 2020
 
   @brief        LSH (Libstephen SHell)
 
@@ -16,7 +16,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
- 
+
 
 /*
   Function Declarations for builtin shell commands:
@@ -25,23 +25,23 @@ int lsh_cd(char **args);
 int lsh_help(char **args);
 int lsh_exit(char **args);
 
-int setshellname(char **args); 
-int stop(char **args); 
-int setterminator(char ** args); 
+int setshellname(char **args);
+int stop(char **args);
+int setterminator(char ** args);
 int newname(char **args);
 int listNewNames();
 int saveNewNames(char **args);
-int readNewNames(char **args); 
-
+int readNewNames(char **args);
+int help();
 
 char *shellname = "myshell";
 char terminator = '>';
 
 
 
-int new_name_count = 0; 
-char new_name_arr [10][20]; 
-char old_name_arr [10][20]={
+int new_name_count = 0;
+char new_name_arr [10][20]; //array for new names
+char old_name_arr [10][20]={ //array for old names
  "cd",
  "help",
  "exit",
@@ -50,25 +50,27 @@ char old_name_arr [10][20]={
  "newname",
  "listNewNames",
  "saveNewNames",
- "readNewNames"
+ "readNewNames",
+ "help"
 };
 /*
   List of builtin commands, followed by their corresponding functions.
  */
-char *builtin_str[] = {
+char *builtin_str[] = { //built in functions
   "cd",
   "help",
   "exit",
-  "setshellname", 
+  "setshellname",
   "stop",
   "setterminator",
   "newname",
   "listNewNames",
   "saveNewNames",
-  "readNewNames"
+  "readNewNames",
+  "help"
 };
 
-int (*builtin_func[]) (char **) = {
+int (*builtin_func[]) (char **) = { // memory address for functions
   &lsh_cd,
   &lsh_help,
   &lsh_exit,
@@ -78,79 +80,87 @@ int (*builtin_func[]) (char **) = {
   &newname,
   &listNewNames,
   &saveNewNames,
-  &readNewNames
+  &readNewNames,
+  &help
 };
 
 int lsh_num_builtins() {
   return sizeof(builtin_str) / sizeof(char *);
 }
-
+// ^ number of built in functions
 /*
   Builtin function implementations.
 */
+int help(){ //produces a list of built in functions
+	for(int i = 0; builtin_str[i]; i++){
+		printf("\n%s", builtin_str[i]);
+	}
+	return 1;
+}
 
+//reads new names from file
 int readNewNames(char **args){
-	char character; 
+	char character;
 	if(args[1] == NULL){
-		printf("readNewNames <file_name>\n"); 
+		printf("readNewNames <file_name>\n");
 	}
 	else
 	{
 		FILE *file;
-		file =fopen(args[1],"r"); 
+		file =fopen(args[1],"r");
 		if(file == NULL){
-			printf("invalid file \n"); 
-			return 1; 
+			printf("invalid file \n");
+			return 1;
 		}
-		character = fgetc(file); 
+		character = fgetc(file);
 		while(character!= EOF){
-			printf("%c",character); 
-			character = fgetc(file); 
+			printf("%c",character);
+			character = fgetc(file);
 		}
-		fclose(file); 
+		fclose(file);
 	}
-	return 1; 
-	
+	return 1;
+
 }
 
 
-
+//writes new names from file
 int saveNewNames(char **args){
 	if(args[1] == NULL){
-		printf("Not a valid argument\n"); 
+		printf("Not a valid argument\n");
 	}
 	else{
-		FILE  *file; 
-		file = fopen(args[1], "w"); 
+		FILE  *file;
+		file = fopen(args[1], "w");
 		for (int i = 0; i < new_name_count; i++){
-			fprintf(file, "%s\t %s \n", new_name_arr[i], old_name_arr[i]); 
+			fprintf(file, "%s\t %s \n", new_name_arr[i], old_name_arr[i]);
 		}
-		fclose(file); 
+		fclose(file);
 		return 1;
-	}	
-}
-
-int listNewNames(){
-	printf("New Names\n"); 
-	for(int i = 0; i < new_name_count;i++){
-		printf("%s\t %s\n", new_name_arr[i], old_name_arr[i]); 
 	}
-	return 1; 
+}
+//prints a list of new names
+int listNewNames(){
+	printf("New Names\n");
+	for(int i = 0; i < new_name_count;i++){
+		printf("%s\t %s\n", new_name_arr[i], old_name_arr[i]);
+	}
+	return 1;
 }
 
-
+//creates a new name for a built in function
 int newname(char **args){
- int i = 0; 
- int pos_arr=0; 
+ int i = 0;
+ int pos_arr=0;
    	if(args[1] == NULL) { printf("No name Entered"); }
   else if(args[2] == NULL){
     printf("Enter a valid no name");
-    return 1; 
+    return 1;
   }
-  else{  
-    while(i < pos_arr && old_name_arr[0] != args[2]){
-	i++; 
-  
+  else{
+    while(i < new_name_count && old_name_arr[0] != args[2]){
+	i++;
+
     }
   }
     if(old_name_arr[i] == args[2]){
@@ -158,16 +168,16 @@ int newname(char **args){
 	    //new_name_arr[i] == args[1];
     }
     else{
-    	strcpy(old_name_arr[pos_arr],args[2]); 
-	strcpy(old_name_arr[pos_arr],args[2]);
-    	//old_name_arr[pos_arr] = args[2]; 
-       // new_name_arr[pos_arr] = args[1]; 
-	pos_arr++; 	
+    	strcpy(old_name_arr[new_name_count],args[2]);
+	strcpy(new_name_arr[new_name_count],args[1]);
+    	//old_name_arr[pos_arr] = args[2];
+       // new_name_arr[pos_arr] = args[1];
+	new_name_count++;
     }
-    return 1; 
+    return 1;
 }
 
-
+//sets new terminator
 int setterminator(char **args){
 if (args[1] == NULL){
 	terminator = '>';
@@ -177,7 +187,7 @@ else{
 }
 }
 
-
+//sets a new shell name
 int setshellname(char **args)
 {
     if(args[1] == NULL){
@@ -216,7 +226,6 @@ int lsh_cd(char **args)
 int lsh_help(char **args)
 {
   int i;
-  printf("Stephen Brennan's LSH\n");
   printf("Type program names and arguments, and hit enter.\n");
   printf("The following are built in:\n");
 
@@ -240,7 +249,7 @@ int lsh_exit(char **args)
 
 int stop(char **args)
 {
-	return 0; 
+	return 0;
 }
 
 
@@ -282,15 +291,22 @@ int lsh_launch(char **args)
 int lsh_execute(char **args)
 {
   int i;
-
+  int j;
   if (args[0] == NULL) {
     // An empty command was entered.
     return 1;
   }
 
-  for (i = 0; i < lsh_num_builtins(); i++) {
-    if (strcmp(args[0], builtin_str[i]) == 0) {
-      return (*builtin_func[i])(args);
+  for(i = 0; i < new_name_count; i++){
+  	if(strcmp(args[0],new_name_arr[i]) ==0)
+	{
+		args[0] = old_name_arr[i];
+	}
+  }
+
+  for (j = 0;j < lsh_num_builtins(); j++) {
+    if (strcmp(args[0], builtin_str[j]) == 0) {
+      return (*builtin_func[j])(args);
     }
   }
 
@@ -405,7 +421,7 @@ void lsh_loop(void)
 
   do {
     printf("%s",shellname);
-    printf("%c ",terminator); 
+    printf("%c ",terminator);
     line = lsh_read_line();
     args = lsh_split_line(line);
     status = lsh_execute(args);
@@ -432,4 +448,3 @@ int main(int argc, char **argv)
 
   return EXIT_SUCCESS;
 }
-

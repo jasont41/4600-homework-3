@@ -1,0 +1,55 @@
+Script started on 2020-10-04 15:57:01-07:00 [TERM="xterm-256color" TTY="/dev/pts/0" COLUMNS="80" LINES="24"]
+]0;006915071@csusb.edu@jb358-1:~/hw3[006915071@csusb.edu@jb358-1 hw3]$ ../[K[K/myshell
+myshell> ls -1 
+hw3.c
+loghw3.txt
+main.c
+myshell
+myshell> setshellname mysh
+mysh> setterminator $
+mysh$ who
+006915071@csusb.edu pts/0        2020-10-04 12:39 (139.182.154.17)
+006264657@csusb.edu pts/1        2020-10-04 14:08 (139.182.154.17)
+006915071@csusb.edu pts/2        2020-10-04 15:57
+mysh$ newname mysh  help help
+mysh$ newname mycop  y cp
+mysh$ 
+mysh$ newname mycat cat
+mysh$ newname mydel rm 
+mysh$ saveNewNames
+Not a valid argument
+mysh$ saveNewNames myaliases 
+mysh$ listNewNames
+New Names
+myhelp	 help
+mycopy	 cp
+mycat	 cat
+mydel	 rm
+mysh$ mycat myaliases
+myhelp	 help 
+mycopy	 cp 
+mycat	 cat 
+mydel	 rm 
+mysh$ mycopy ete c/motd/ myfule   ile
+cp: cannot stat 'etc/motd/': No such file or directory
+mysh$ mycopy etc          mycopy /etc/motd myfile
+mysh$ mycat myfile 
+mysh$ cat myfile 
+mysh$ ls
+hw3.c  loghw3.txt  main.c  myaliases  myfile  myshell
+mysh$ listNewNames
+New Names
+myhelp	 help
+mycopy	 cp
+mycat	 cat
+mydel	 rm
+mysh$ R readNewNames myaliases
+myhelp	 help 
+mycopy	 cp 
+mycat	 cat 
+mydel	 rm 
+mysh$ stop
+]0;006915071@csusb.edu@jb358-1:~/hw3[006915071@csusb.edu@jb358-1 hw3]$ exit
+exit
+
+Script done on 2020-10-04 16:12:04-07:00 [COMMAND_EXIT_CODE="0"]
