@@ -30,7 +30,10 @@ int stop(char **args);
 int setterminator(char ** args); 
 int newname(char **args);
 int listNewNames();
-int saveNewNames(char **args); 
+int saveNewNames(char **args);
+int readNewNames(char **args); 
+
+
 char *shellname = "myshell";
 char terminator = '>';
 
@@ -46,7 +49,8 @@ char old_name_arr [10][20]={
  "setterminator",
  "newname",
  "listNewNames",
- "saveNewNames"
+ "saveNewNames",
+ "readNewNames"
 };
 /*
   List of builtin commands, followed by their corresponding functions.
@@ -60,7 +64,8 @@ char *builtin_str[] = {
   "setterminator",
   "newname",
   "listNewNames",
-  "saveNewNames"
+  "saveNewNames",
+  "readNewNames"
 };
 
 int (*builtin_func[]) (char **) = {
@@ -72,7 +77,8 @@ int (*builtin_func[]) (char **) = {
   &setterminator,
   &newname,
   &listNewNames,
-  &saveNewNames
+  &saveNewNames,
+  &readNewNames
 };
 
 int lsh_num_builtins() {
@@ -82,6 +88,32 @@ int lsh_num_builtins() {
 /*
   Builtin function implementations.
 */
+
+int readNewNames(char **args){
+	char character; 
+	if(args[1] == NULL){
+		printf("readNewNames <file_name>\n"); 
+	}
+	else
+	{
+		FILE *file;
+		file =fopen(args[1],"r"); 
+		if(file == NULL){
+			printf("invalid file \n"); 
+			return 1; 
+		}
+		character = fgetc(file); 
+		while(character!= EOF){
+			printf("%c",character); 
+			character = fgetc(file); 
+		}
+		fclose(file); 
+	}
+	return 1; 
+	
+}
+
+
 
 int saveNewNames(char **args){
 	if(args[1] == NULL){
