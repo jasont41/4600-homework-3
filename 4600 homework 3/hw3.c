@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+ 
 
 /*
   Function Declarations for builtin shell commands:
@@ -28,7 +29,8 @@ int setshellname(char **args);
 int stop(char **args); 
 int setterminator(char ** args); 
 int newname(char **args);
-int listNewNames(); 
+int listNewNames();
+int saveNewNames(char **args); 
 char *shellname = "myshell";
 char terminator = '>';
 
@@ -43,7 +45,8 @@ char old_name_arr [10][20]={
  "setshellname",
  "setterminator",
  "newname",
- "listNewNames"
+ "listNewNames",
+ "saveNewNames"
 };
 /*
   List of builtin commands, followed by their corresponding functions.
@@ -56,7 +59,8 @@ char *builtin_str[] = {
   "stop",
   "setterminator",
   "newname",
-  "listNewNames"
+  "listNewNames",
+  "saveNewNames"
 };
 
 int (*builtin_func[]) (char **) = {
@@ -67,7 +71,8 @@ int (*builtin_func[]) (char **) = {
   &stop,
   &setterminator,
   &newname,
-  &listNewNames
+  &listNewNames,
+  &saveNewNames
 };
 
 int lsh_num_builtins() {
@@ -77,6 +82,21 @@ int lsh_num_builtins() {
 /*
   Builtin function implementations.
 */
+
+int saveNewNames(char **args){
+	if(args[1] == NULL){
+		printf("Not a valid argument\n"); 
+	}
+	else{
+		FILE  *file; 
+		file = fopen(args[1], "w"); 
+		for (int i = 0; i < new_name_count; i++){
+			fprintf(file, "%s\t %s \n", new_name_arr[i], old_name_arr[i]); 
+		}
+		fclose(file); 
+		return 1;
+	}	
+}
 
 int listNewNames(){
 	printf("New Names\n"); 
