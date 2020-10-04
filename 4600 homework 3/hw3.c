@@ -28,7 +28,7 @@ int setshellname(char **args);
 int stop(char **args); 
 int setterminator(char ** args); 
 int newname(char **args);
-
+int listNewNames(); 
 char *shellname = "myshell";
 char terminator = '>';
 
@@ -42,7 +42,8 @@ char old_name_arr [10][20]={
  "exit",
  "setshellname",
  "setterminator",
- "newname"
+ "newname",
+ "listNewNames"
 };
 /*
   List of builtin commands, followed by their corresponding functions.
@@ -54,7 +55,8 @@ char *builtin_str[] = {
   "setshellname", 
   "stop",
   "setterminator",
-  "newname"
+  "newname",
+  "listNewNames"
 };
 
 int (*builtin_func[]) (char **) = {
@@ -64,7 +66,8 @@ int (*builtin_func[]) (char **) = {
   &setshellname,
   &stop,
   &setterminator,
-  &newname
+  &newname,
+  &listNewNames
 };
 
 int lsh_num_builtins() {
@@ -74,6 +77,16 @@ int lsh_num_builtins() {
 /*
   Builtin function implementations.
 */
+
+int listNewNames(){
+	printf("New Names\n"); 
+	for(int i = 0; i < new_name_count;i++){
+		printf("%s\t %s\n", new_name_arr[i], old_name_arr[i]); 
+	}
+	return 1; 
+}
+
+
 int newname(char **args){
  int i = 0; 
  int pos_arr=0; 
